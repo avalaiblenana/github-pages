@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vocabulary Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 1rem 0;
+            text-align: center;
+        }
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 1rem;
+            background: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        input, textarea, button {
+            margin: 0.5rem 0;
+            padding: 0.5rem;
+            font-size: 1rem;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .word-list {
+            margin-top: 2rem;
+        }
+        .word-item {
+            padding: 0.5rem;
+            border-bottom: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Vocabulary Tracker</h1>
+    </header>
+    <div class="container">
+        <h2>Add a New Word</h2>
+        <form id="wordForm">
+            <input type="text" id="word" placeholder="Word" required>
+            <textarea id="meaning" placeholder="Meaning" rows="3" required></textarea>
+            <textarea id="example" placeholder="Example Sentence" rows="3"></textarea>
+            <button type="submit">Add Word</button>
+        </form>
+
+        <div class="word-list">
+            <h2>My Vocabulary</h2>
+            <div id="words"></div>
+        </div>
+    </div>
+
+    <script>
+        const wordForm = document.getElementById('wordForm');
+        const wordsContainer = document.getElementById('words');
+
+        const words = JSON.parse(localStorage.getItem('words')) || [];
+
+        const renderWords = () => {
+            wordsContainer.innerHTML = '';
+            words.forEach((word, index) => {
+                const wordItem = document.createElement('div');
+                wordItem.classList.add('word-item');
+                wordItem.innerHTML = `
+                    <strong>${word.word}</strong> - ${word.meaning}<br>
+                    <em>${word.example}</em>
+                    <button onclick="deleteWord(${index})">Delete</button>
+                `;
+                wordsContainer.appendChild(wordItem);
+            });
+        };
+
+        const deleteWord = (index) => {
+            words.splice(index, 1);
+            localStorage.setItem('words', JSON.stringify(words));
+            renderWords();
+        };
+
+        wordForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const word = document.getElementById('word').value;
+            const meaning = document.getElementById('meaning').value;
+            const example = document.getElementById('example').value;
+
+            words.push({ word, meaning, example });
+            localStorage.setItem('words', JSON.stringify(words));
+
+            document.getElementById('word').value = '';
+            document.getElementById('meaning').value = '';
+            document.getElementById('example').value = '';
+
+            renderWords();
+        });
+
+        renderWords();
+    </script>
+</body>
+</html>
